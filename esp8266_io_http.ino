@@ -12,7 +12,8 @@
 #include <ESP8266mDNS.h>
 #include "user_interface.h" // Needed for timer
 
-#define INPUT_PIN 2  // Define Pin GPIO2 as input pin
+// Define Pin GPIO2 as input pin
+#define INPUT_PIN 2
 
 // Define time function for periodic read in of digital input
 os_timer_t myTimer;
@@ -38,12 +39,15 @@ const char* mdns_name = "esp8266";
 // Setup routine
 void setup() {
 
-  pinMode(INPUT_PIN, INPUT); // Configure pin INPUT_PIN as input
+  // Configure pin INPUT_PIN as input
+  pinMode(INPUT_PIN, INPUT);
 
-  Serial.begin(9600);        // Configure serial port
+  // Configure serial port
+  Serial.begin(9600);
   delay(10);
 
-  connect_wifi();            // Connect to WiFi
+  // Connect to WiFi
+  connect_wifi();
   
   // Activate MDNS responder
   if (mdns.begin(mdns_name, WiFi.localIP())) {
@@ -51,7 +55,8 @@ void setup() {
     Serial.println("MDNS responder started");
   }
   
-  start_httpd();             // Start webserver
+  // Start webserver
+  start_httpd();
   
   // Configure timer
   os_timer_setfn(&myTimer, timerCallback, NULL);
@@ -79,7 +84,8 @@ void connect_wifi() {
   Serial.print(ssid);
   Serial.print(" ");
 
-  WiFi.mode(WIFI_STA); // Explicitly set the ESP8266 to be a WiFi-client
+  // Explicitly set the ESP8266 to be a WiFi-client
+  WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   
   while (WiFi.status() != WL_CONNECTED) {
