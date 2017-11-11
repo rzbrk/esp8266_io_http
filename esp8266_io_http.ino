@@ -17,10 +17,14 @@
 
 // Define time function for periodic read in of digital input
 os_timer_t myTimer;
-#define TIMER_UPDATE 1000
+#define TIMER_UPDATE 1000    // reading cycle [milliseconds]
 
-// Bolean variable for digital input reads
-bool inp = 0;
+// Define array to hold a specif number of readings of the digital
+// input. It is used as round robin array, pushing a new reading to
+// the beginning of the array and deleting the last/oldest reading.
+#define N_READINGS 60        // length of array
+#define READINGS_DEFAULT 1   // default value for initialization
+bool readings[N_READINGS];
 
 // WiFi parameter
 const char* ssid     = "Freifunk";
@@ -41,6 +45,11 @@ void setup() {
 
   // Configure pin INPUT_PIN as input
   pinMode(INPUT_PIN, INPUT);
+
+  // Initialize array for readings
+  for (int i = 0; i < N_READINGS; i++) {
+    readings[i] = READINGS_DEFAULT;
+  }
 
   // Configure serial port
   Serial.begin(9600);
@@ -68,11 +77,44 @@ void loop() {
   server.handleClient();
 }
 
+// =======================================================
+
+// Add reading to array of readings
+void addToReadings(bool *readings, bool reading) {
+  // First, move all elements on position up and drop last
+  // (oldest) element
+  for (int i = N_READINGS-1; i >= 1; i--) {
+    readings[i] = readings[i - 1];
+  }
+  // Second, add reading to the first position of array
+  readings[0] = reading;
+  
+  // Output array
+  Serial.print("(");
+  for (int i = 0; i < N_READINGS; i++) {
+    Serial.print(readings[i]);
+  }
+  Serial.println(")");
+}
+
+// Count all elements in array of reading that are not
+// equal READINGS_DEFAULT
+int countInReadings(bool *readings) {
+  int count = 0;
+  for (int i = 0; i< N_READINGS; i++) {
+    if (readings[i] != READINGS_DEFAULT) {
+      count++;
+    }
+  }
+  return count;
+}
+
 // Timer-controlled read in of digital input
 void timerCallback(void *pArg) {
-  inp=digitalRead(INPUT_PIN);
+  bool inp=digitalRead(INPUT_PIN);
   Serial.print("Read digital input: ");
   Serial.println(inp);
+  addToReadings(&readings[0], inp);
 }
 
 // Conecting to WiFi network
@@ -117,7 +159,12 @@ void start_httpd() {
 
   server.on("/", [](){
     Serial.println("HTTP request");
-    server.send(200, "text/html", webpage_head+inp+webpage_trail);
+    server.send(200,
+                "text/html",
+                webpage_head
+                + countInReadings(&readings[0])
+                + webpage_trail
+               );
   });
   server.begin();
   Serial.println("HTTP server started"); 
