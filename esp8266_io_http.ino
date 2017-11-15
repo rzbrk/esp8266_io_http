@@ -1,7 +1,7 @@
 /*
  ESP8266 IO HTTP
  
- This program reads on digital input of the ESP8266 and displays
+ This program reads one digital input of the ESP8266 and displays
  the result on a webpage. The ESP8266 connects directly to a
  defined wifi on bootup.
 
@@ -72,7 +72,9 @@ void setup() {
   os_timer_arm(&myTimer, TIMER_UPDATE, true);
 }
 
-// the loop function runs over and over again forever
+// +-----------------------------------------------------+
+//   the loop function runs over and over again forever
+// +-----------------------------------------------------+
 void loop() {
   server.handleClient();
   
@@ -86,7 +88,9 @@ void loop() {
 
 // =======================================================
 
-// Add reading to array of readings
+// +-----------------------------------------------------+
+//   Add reading to array of readings
+// +-----------------------------------------------------+
 void addToReadings(bool *readings, bool reading) {
   // First, move all elements on position up and drop last
   // (oldest) element
@@ -104,8 +108,10 @@ void addToReadings(bool *readings, bool reading) {
   Serial.println(")");
 }
 
-// Count all elements in array of reading that are not
-// equal READINGS_DEFAULT
+// +-----------------------------------------------------+
+//   Count all elements in array of reading that are not
+//   equal READINGS_DEFAULT
+// +-----------------------------------------------------+
 int countInReadings(bool *readings) {
   int count = 0;
   for (int i = 0; i< N_READINGS; i++) {
@@ -116,7 +122,9 @@ int countInReadings(bool *readings) {
   return count;
 }
 
-// Timer-controlled read in of digital input
+// +-----------------------------------------------------+
+//   Timer-controlled read in of digital input
+// +-----------------------------------------------------+
 void timerCallback(void *pArg) {
   bool inp=digitalRead(INPUT_PIN);
   Serial.print("Read digital input: ");
@@ -124,7 +132,9 @@ void timerCallback(void *pArg) {
   addToReadings(&readings[0], inp);
 }
 
-// Conecting to WiFi network
+// +-----------------------------------------------------+
+//   Conecting to WiFi network
+// +-----------------------------------------------------+
 void connect_wifi() {
   WiFi.disconnect();
   
@@ -153,7 +163,9 @@ void connect_wifi() {
   Serial.println();
 }
 
-// Setup the webserver
+// +-----------------------------------------------------+
+//   Setup the webserver
+// +-----------------------------------------------------+
 void start_httpd() {
   webpage_head+="<html><head>";
   webpage_head+="<title>ESP8266 Webserver</title>";
@@ -162,7 +174,7 @@ void start_httpd() {
   webpage_head+="<h1>ESP8266 Webserver</h1>";
   webpage_head+="<p>Welcome to the website of ESP8266!</p>";
   webpage_head+="<p>The following value is a counter for ";
-  webpage_head+="&glqq;on&glqq;-Readings of the digital input pin ";
+  webpage_head+="&glqq;on&glqq;-readings of the digital input pin ";
   webpage_head+="in a round robin array.</p>";
   webpage_head+="<p>Value: ";
 
