@@ -75,6 +75,13 @@ void setup() {
 // the loop function runs over and over again forever
 void loop() {
   server.handleClient();
+  
+  // It seems, that the ESP8266 may lose Wifi when running
+  // for a longer time. In this case, try to reconnect
+  if (WiFi.status() != WL_CONNECTED) {
+    Serial.println("Lost WiFi connection. Reconnecting");
+    connect_wifi();
+  }
 }
 
 // =======================================================
@@ -119,6 +126,8 @@ void timerCallback(void *pArg) {
 
 // Conecting to WiFi network
 void connect_wifi() {
+  WiFi.disconnect();
+  
   Serial.println();
   Serial.println();
   Serial.println();
