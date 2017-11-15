@@ -161,7 +161,10 @@ void start_httpd() {
   webpage_head+="</head><body>";
   webpage_head+="<h1>ESP8266 Webserver</h1>";
   webpage_head+="<p>Welcome to the website of ESP8266!</p>";
-  webpage_head+="<p>Digital Input: ";
+  webpage_head+="<p>The following value is a counter for ";
+  webpage_head+="&glqq;on&glqq;-Readings of the digital input pin ";
+  webpage_head+="in a round robin array.</p>";
+  webpage_head+="<p>Value: ";
 
   webpage_trail+="</p>";  
   webpage_trail+="</body></html>";
